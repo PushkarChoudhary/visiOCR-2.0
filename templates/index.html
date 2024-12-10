@@ -1,0 +1,548 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VisiOCR | Home</title>
+    <style>
+        /* Main styling for background and container */
+        
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: radial-gradient(circle at top right, #4a90e2, #50c8ff, #54b7c2);
+            color: #333;
+            flex-direction: column;
+            text-align: center;
+            padding: 20px;
+            padding-right: 40px;
+        }
+
+        #submit_button{
+            background-color: #007bff;
+            color: white;
+
+        }
+
+        .container, .id-form {
+            width: 100%;
+            max-width: 450px;
+            padding: 25px;
+            border-radius: 15px;
+            background: #ffffff;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            margin-top: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .container:hover {
+            transform: translateY(-5px);
+        }
+
+        h1 {
+            font-size: 30px;
+            color: #007bff;
+            font-weight: bold;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        .instructions {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        /* Preview image and video styling */
+        #preview, #videoElement {
+            width: 100%;
+            max-width: 100%;
+            height: auto;
+            border: 2px dashed #007bff;
+            border-radius: 12px;
+            display: none;
+            margin-bottom: 20px;
+            transition: opacity 0.4s;
+        }
+
+        /* Button styling with hover effects */
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .buttons button, .buttons label {
+            padding: 12px 24px;
+            padding-right: 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .buttons button:hover, .buttons label:hover {
+            background-color: #0056b3;
+            transform: translateY(-3px);
+        }
+
+        .buttons button:disabled, .buttons button:disabled:hover {
+            background-color: #cccccc;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        /* Custom file input styling */
+        .buttons label {
+            display: inline-block;
+            cursor: pointer;
+            text-align: center;
+            width: 100%;
+            max-width: 200px;
+        }
+        
+        /* gender radio buttons style start */
+
+        /* Style for the radio button labels */
+        #radio-inputs div label {
+            display: inline-block;
+            font-size: 16px;
+            cursor: pointer;
+            user-select: none;
+            font-weight: normal;
+            color: black;
+            transition: color 0.2s ease;
+            margin-left: 10px; /* Space between the radio button and the label */
+            vertical-align: sub; /* Align label vertically to the center */
+        }
+
+        /* Hover effect for labels */
+        #radio-inputs div label:hover {
+            color: blue; /* Change label color on hover */
+        }
+
+        /* Style for the container of the radio buttons */
+        #radio-inputs {
+            display: block;
+            text-align: left;
+        }
+
+        /* Style for radio buttons to make them visible */
+        #radio-inputs input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid #ccc; /* Border to make the radio button visible */
+            background-color: white; /* Ensure background is white */
+            transition: background-color 0.3s, border-color 0.3s;
+            vertical-align: middle; /* Align the radio button properly with the label */
+        }
+
+        /* Style when radio button is checked */
+        #radio-inputs input[type="radio"]:checked {
+            background-color: blue; /* Change background when selected */
+            border-color: blue; /* Change border color when selected */
+        }
+
+        /* Style for the label when radio button is checked */
+        #radio-inputs div input[type="radio"]:checked + label {
+            font-weight: bold;
+            color: blue; /* Change label text color when selected */
+        }
+
+        /* Optional: Add a border around the entire radio button wrapper */
+        #radio-inputs div {
+            margin-bottom: 10px; /* Space between the radio button items */
+        }
+
+
+        /* gender radio buttons style end */
+
+        #fileInput {
+            display: none;
+        }
+
+        /* Loading spinner styling */
+        .spinner {
+            display: none;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #007bff;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Form styling */
+        .id-form {
+            display: none;
+            padding: 20px;
+            padding-right: 40px;
+            background-color: #f9fafb;
+            border: 1px solid #007bff;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            margin-top: 20px;
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .id-form label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #007bff;
+            text-align: left;
+            margin-top: 15px;
+            margin-bottom: 5px;
+        }
+
+        .id-form input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+            background-color: #ffffff;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: border-color 0.2s;
+        }
+
+        #valueDisplay {
+            font-size: 14px;
+            background-color: #ffffff;
+            weight: 600;
+        }
+
+        .id-form input:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>visiOCR</h1>
+        <div class="instructions">Position your Aadhaar or PAN card within the frame for a clear capture, or upload from file.</div>
+        <img id="preview" src='{% static "/images/preview.png" %}' alt="Image Preview">
+        <video id="videoElement" autoplay></video>
+        <div class="buttons">
+            <button id="openCamera">Open Camera</button>
+            <button id="captureImage" disabled>Capture Image</button>
+            <button id="uploadImage" disabled>Upload Image</button>
+            <div style="font-weight: bold; color: #666;">Or</div>
+            <label for="fileInput" class="buttons">
+                <input type="file" id="fileInput" accept="image/*">
+                Browse Image
+            </label>
+        </div>
+        <div class="spinner" id="spinner"></div>
+    </div>
+    <form class="id-form" id="idForm"></form>
+    <script>
+        let videoStream = null;
+
+        const videoConstraints = {
+            video: {
+                width: { ideal: 1280 },
+                height: { ideal: 720 }
+            }
+        };
+
+        document.getElementById('openCamera').addEventListener('click', async function() {
+            try {
+                videoStream = await navigator.mediaDevices.getUserMedia(videoConstraints);
+                const video = document.getElementById('videoElement');
+                video.srcObject = videoStream;
+                video.style.display = 'block';
+                document.getElementById('preview').style.display = 'none';
+                document.getElementById('captureImage').disabled = false;
+            } catch (error) {
+                console.error('Error accessing camera:', error);
+                alert('Failed to access camera.');
+            }
+        });
+
+        document.getElementById('captureImage').addEventListener('click', function() {
+            const video = document.getElementById('videoElement');
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            const imageDataUrl = canvas.toDataURL('image/png');
+            document.getElementById('preview').src = imageDataUrl;
+            document.getElementById('preview').style.display = 'block';
+            video.style.display = 'none';
+
+            videoStream.getTracks().forEach(track => track.stop());
+            videoStream = null;
+            document.getElementById('uploadImage').disabled = false;
+        });
+
+        document.getElementById('fileInput').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('preview').src = e.target.result;
+                    document.getElementById('preview').style.display = 'block';
+                    document.getElementById('videoElement').style.display = 'none';
+                    document.getElementById('uploadImage').disabled = false;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        document.getElementById('uploadImage').addEventListener('click', async function() {
+            const previewImage = document.getElementById('preview').src;
+            const timestamp = new Date().getTime();
+            const filename = timestamp.toString() + ".png"; 
+            const blob = await (await fetch(previewImage)).blob();
+            const formData = new FormData();
+            formData.append('image', blob, filename); 
+            const spinner = document.getElementById('spinner');
+            spinner.style.display = 'block';
+            try {
+                const response = await fetch('/upload-image/', {
+                    method: 'POST',
+                    body: formData
+                });
+                spinner.style.display = 'none';
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data['card_type']==null){
+                        alert('Invalid/Improper image. Please upload again.');
+                        location.reload();
+                        event.preventDefault();
+                    } 
+                    alert('Image uploaded successfully.');
+                    document.getElementById('preview').src = '{% static "/images/preview.png" %}';
+                    document.getElementById('captureImage').disabled = true;
+                    document.getElementById('uploadImage').disabled = true;
+                    const idForm = document.getElementById('idForm');
+                    idForm.innerHTML = '';
+
+                    var genderPresent = false;
+                    var invalid_name = false;
+                    for (const [key, value] of Object.entries(data.details)) {
+
+                        if (key.toLowerCase() == 'is_invalid_name' && value == true) {
+                            if(confirm("Do you still want to proceed with the current name?")){
+                            }
+                            else {
+                                const label5 = document.createElement('label');
+                                label5.textContent = 'Name';
+                                const input5 = document.createElement('input');
+                                input5.type = 'text';
+                                input5.value = '';
+                                input5.id = 'name';
+                                input5.name = 'name';
+                                input5.maxlength = '15';
+                                idForm.appendChild(label5);
+                                idForm.appendChild(input5);
+                                invalid_name = true;
+                                continue;
+
+                            }
+
+                        }
+                       if (invalid_name == true && key.toLowerCase() == 'name'){
+                            continue;
+                        }
+                        if (key.toLowerCase() == 'is_invalid_name'){
+                            continue;
+                       }
+                        
+                        const label = document.createElement('label');
+                        label.textContent = key;
+                        const input = document.createElement('input');
+                        input.type = 'text';
+                        input.value = value;
+                        input.id = key;
+                        input.name = key;
+                        input.readOnly = true;
+                        
+                        if (key.toLowerCase() == 'qr_img_name'){
+                            input.hidden = true; 
+                            idForm.appendChild(input);    
+                       } else {
+                            idForm.appendChild(label);
+                            idForm.appendChild(input);
+                        }
+
+                        if (key.toLowerCase() == 'gender') {
+                            genderPresent = true;
+                        }
+
+                        
+                    }
+
+                    if (!genderPresent){
+                        const label1 = document.createElement('label');
+                        label1.textContent = 'Gender';
+
+                        // Create a container to hold the radio buttons
+                        const radioContainer = document.createElement('div');
+                        radioContainer.id = 'radio-inputs';
+
+                        // Create the radio buttons for Male, Female, and Other
+                        const genders = ['Male', 'Female', 'Other'];
+                        genders.forEach(gender => {
+                            const radioWrapper = document.createElement('div');
+                            
+                            const radioButton = document.createElement('input');
+                            radioButton.type = 'radio';
+                            radioButton.id = gender;
+                            radioButton.classList.add('gender-radio');
+                            radioButton.name = 'Gender'; // Group the radio buttons by the same name
+                            radioButton.value = gender;
+
+                            const radioLabel = document.createElement('label');
+                            radioLabel.setAttribute('for', gender);
+                            radioLabel.classList.add('gender-label');
+                            radioLabel.textContent = gender;
+
+                            // Append the radio button and label to the wrapper
+                            radioWrapper.appendChild(radioButton);
+                            radioWrapper.appendChild(radioLabel);
+                            
+                            // Append the radio button wrapper to the container
+                            radioContainer.appendChild(radioWrapper);
+                        });
+
+                        // Append the label and the radio button container to the form
+                        idForm.appendChild(label1);
+                        idForm.appendChild(radioContainer);
+
+                    }
+                    const label2 = document.createElement('label');
+                        label2.textContent = 'Phone';
+                        const input2 = document.createElement('input');
+                        input2.type = 'text';
+                        input2.value = '';
+                        input2.id = 'phone';
+                        input2.name = 'phone';
+                        idForm.appendChild(label2);
+                        idForm.appendChild(input2);
+                    
+                    function generateUniqueId() {
+                        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+                        let uniqueId = '';
+                        for (let i = 0; i < 8; i++) {
+                            uniqueId += characters.charAt(Math.floor(Math.random() * characters.length));
+                        }
+                        return uniqueId;
+                    }
+                    const label3 = document.createElement('label');
+                        label3.textContent = 'Pass Id';
+                        const input3 = document.createElement('input');
+                        input3.type = 'text';
+                        input3.value = generateUniqueId();
+                        input3.id = 'pass_id';
+                        input3.name = 'pass_id';
+                        idForm.appendChild(label3);
+                        idForm.appendChild(input3);
+                    
+                    const label7 = document.createElement('label');
+                        label7.textContent = 'Expire After';
+                        const select7 = document.createElement('select');
+                        select7.value = '';
+                        select7.id = 'expire_at';
+                        select7.name = 'expire_at';
+
+                        // Create the options
+                        // const options = ['1 Hour', '2 Hours', '3 Hours', '4 Hours', '5 Hours', '6 Hours'];
+                        // let hour = 1;
+                        // options.forEach(optionText => {
+                        //     const option = document.createElement('option');
+                        //     option.value = hour;
+                        //     option.textContent = optionText;
+                        //     select7.appendChild(option);
+                        //     hour += 1;
+                        // });
+
+                        // idForm.appendChild(label7);
+                        // idForm.appendChild(select7);
+                    
+                        const input7 = document.createElement('input');
+                        input7.type = 'range';
+                        input7.id = 'expire_at';
+                        input7.name = 'expire_at';
+                        input7.min = 1;
+                        input7.max = 6;
+                        input7.step = 1;
+                        input7.value = 1; // Default value
+
+                        // Optional: To display the value of the slider as it's being adjusted
+                        const valueDisplay = document.createElement('span');
+                        input7.id = 'valueDisplay';
+                        valueDisplay.textContent = input7.value + " Hour"; // Initial value
+
+                        // Update the value display when the slider value changes
+                        input7.addEventListener('input', function() {
+                            if (input7.value == 1) {
+                                valueDisplay.textContent = input7.value + " Hour";
+                            } else {
+                                valueDisplay.textContent = input7.value + " Hours";
+                            }
+                        });
+
+                        idForm.appendChild(label7);
+                        idForm.appendChild(input7);
+                        idForm.appendChild(valueDisplay);
+
+                    const label4 = document.createElement('label');
+                        label4.textContent = '';
+                        const input4 = document.createElement('input');
+                        input4.type = 'submit';
+                        input4.value = 'Submit';
+                        input4.id = 'submit_button';
+                        input4.name = 'submit_button';
+                        idForm.appendChild(label4);
+                        idForm.appendChild(input4);
+
+                        idForm.style.display = 'block';
+                        idForm.method='POST'
+                        idForm.action = "http://127.0.0.1:8000/visiting-pass/"
+
+
+
+                    
+                } else {
+                    alert('Image upload failed.');
+                }
+            } catch (error) {
+                console.error('Error uploading image:', error);
+                alert('Failed to upload image.');
+                spinner.style.display = 'none';
+            }
+        });
+        
+    </script>
+</body>
+</html>

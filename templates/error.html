@@ -1,0 +1,89 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pass Verification</title>
+    <style>
+        /* Container for the verified checkmark */
+        .verified-container {
+            width: 80px;
+            height: 80px;
+            padding-top: 100px;
+            margin: 50px auto 0px auto;; /* Center the SVG and add margin top and bottom */
+        }
+
+        /* Card Container */
+        .card {
+            width: 80%;
+            max-width: 500px;
+            margin: 62px auto;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            text-align: center;
+            border: 2px solid red; /* Red border around the card */
+        }
+
+        /* Heading (h1) inside the card */
+        .card p {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+            font-type: verdana;
+        }
+
+        /* Button styling */
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            text-align: center;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none; /* Remove underline from link */
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        /* Button hover effect */
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        /* Specific styling for the Home button */
+        .btn-home {
+            background-color: #28a745;
+        }
+
+        .btn-home:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Verified Checkbox SVG (above the card) -->
+<div class="verified-container">
+    <img src="{% static '/images/verified.png' %}" viewBox="0 0 64 64" width="160" height="160">
+</div>
+
+<!-- Card with message and buttons -->
+<div class="card">
+    <p>A Visitor Pass With ID: <b>{{ pass_id }}</b> Already Exists For The Requested Gov ID.</p>
+
+    <!-- View Pass Button -->
+    <a href="{% url 'get_visiting_pass' pass_id=pass_id %}" class="btn"><strong>View Pass</strong></a>
+
+    <!-- Home Button -->
+    <a href="{% url 'upload_page' %}" class="btn btn-home"><strong>Home</strong></a>
+</div>
+
+</body>
+</html>
